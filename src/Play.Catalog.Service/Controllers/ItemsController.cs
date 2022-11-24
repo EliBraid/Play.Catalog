@@ -13,7 +13,7 @@ namespace Play.Catalog.Service.Controllers
         private readonly ItemRepository itemRepository = new();
 
         [HttpGet]
-        public async IEnumerable<ItemDto> GetAsync()
+        public async Task<IEnumerable<ItemDto>> GetAsync()
         {
             var items = (await itemRepository.GetAllAsync()).Select(item=>
             item.AsDto());
