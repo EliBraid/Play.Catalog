@@ -4,31 +4,29 @@ using Play.Catalog.Service.Entities;
 namespace Play.Catalog.Service.Repositories
 {
 
-    public class ItemRepository : IItemRepository
+    public class MongoRepository<T> : IRepository<T> where T: IEntity
     {
-        private const string collectionName = "items";
+        private readonly IMongoCollection<T> dbColleciton;
+        private readonly FilterDefinitionBuilder<T> filter = Builders<T>.Filter;
 
-        private readonly IMongoCollection<Item> dbColleciton;
-        private readonly FilterDefinitionBuilder<Item> filter = Builders<Item>.Filter;
-
-        public ItemRepository(IMongoDatabase database)
+        public MongoRepository(IMongoDatabase database,string collectionName)
         {
-            dbColleciton = database.GetCollection<Item>(collectionName);
+            dbColleciton = database.GetCollection<T>(collectionName);
         }
 
-        public async Task<IReadOnlyCollection<Item>> GetAllAsync()
+        public async Task<IReadOnlyCollection<T>> GetAllAsync()
         {
             return await dbColleciton.Find(filter.Empty).ToListAsync();
         }
 
-        public async Task<Item> GetAsync(Guid id)
+        public async Task<T> GetAsync(Guid id)
         {
-            FilterDefinition<Item> filte = filter.Eq(entity => entity.Id, id);
+            FilterDefinition<T> filte = filter.Eq(entity => entity.Id, id);
 
             return await dbColleciton.Find(filte).FirstOrDefaultAsync();
         }
 
-        public async Task CreateAsync(Item entity)
+        public async Task CreateAsync(T entity)
         {
             if (entity == null)
             {
@@ -39,13 +37,13 @@ namespace Play.Catalog.Service.Repositories
 
 
         }
-        public async Task UpdateAsync(Item entity)
+        public async Task UpdateAsync(T entity)
         {
             if (entity == null)
             {
                 throw new ArgumentException(nameof(entity));
             }
-            FilterDefinition<Item> filte = filter.Eq(existingEntity => existingEntity.Id, entity.Id);
+            FilterDefinition<T> filte = filter.Eq(existingEntity => existingEntity.Id, entity.Id);
 
             await dbColleciton.ReplaceOneAsync(filte, entity);
 
@@ -53,7 +51,7 @@ namespace Play.Catalog.Service.Repositories
 
         public async Task RemoveAsync(Guid id)
         {
-            FilterDefinition<Item> filte = filter.Eq(entity => entity.Id, id);
+            FilterDefinition<T> filte = filter.Eq(entity => entity.Id, id);
             await dbColleciton.DeleteOneAsync(filte);
         }
     }
