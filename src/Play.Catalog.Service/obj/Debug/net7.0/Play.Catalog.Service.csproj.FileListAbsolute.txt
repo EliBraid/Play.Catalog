@@ -42,3 +42,4 @@ D:\ProjectFile\Play.Catalog\src\Play.Catalog.Service\bin\Debug\net7.0\ZstdSharp.
 D:\ProjectFile\Play.Catalog\src\Play.Catalog.Service\bin\Debug\net7.0\runtimes\linux\native\libmongocrypt.so
 D:\ProjectFile\Play.Catalog\src\Play.Catalog.Service\bin\Debug\net7.0\runtimes\osx\native\libmongocrypt.dylib
 D:\ProjectFile\Play.Catalog\src\Play.Catalog.Service\bin\Debug\net7.0\runtimes\win\native\mongocrypt.dll
+D:\ProjectFile\Play.Catalog\src\Play.Catalog.Service\bin\Debug\net7.0\Play.Common.dll

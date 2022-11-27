@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Play.Catalog.Service.Dtos;
 using Play.Catalog.Service.Entities;
 using Play.Catalog.Service.Repositories;
+using Play.Common;
 
 namespace Play.Catalog.Service.Controllers
 {
@@ -11,16 +12,29 @@ namespace Play.Catalog.Service.Controllers
     public class ItemsController: ControllerBase
     {
         private readonly IRepository<Item> itemRepository;
+
+        private static int requestCounter = 0;
         public ItemsController(IRepository<Item> itemRepository)
         {
             this.itemRepository = itemRepository;
         }
         [HttpGet]
-        public async Task<IEnumerable<ItemDto>> GetAsync()
+        public async Task<ActionResult<IEnumerable<ItemDto>>> GetAsync()
         {
+            requestCounter++;
+            System.Console.WriteLine($"Request {requestCounter} : Starting ...");
+            if(requestCounter <= 2){
+                System.Console.WriteLine($"Request {requestCounter} : Delaying ...");
+                await Task.Delay(TimeSpan.FromSeconds(10));
+            }
+            if(requestCounter <= 4){
+                System.Console.WriteLine($"Request {requestCounter} : 500 (Internal Server Error).");
+                return StatusCode(500);
+            }
             var items = (await itemRepository.GetAllAsync()).Select(item=>
             item.AsDto());
-            return items;
+            System.Console.WriteLine($"Request {requestCounter} : 200 (OK).");
+            return Ok(items);
         }
         // GET /items/1234
         [HttpGet("{id}")]
